@@ -3,12 +3,14 @@ import numpy as np
 np.seterr(all='ignore')  # to suppress errors in color conversion fkts
 from sklearn.mixture import GaussianMixture
 from sklearn.cluster import KMeans
-from skimage import io
 import skimage.io
 from skimage.color import rgb2hsv, hsv2rgb
 from sklearn.utils import shuffle
 from sklearn.metrics import pairwise_distances_argmin
 import matplotlib.pyplot as plt
+from sklearn import neighbors
+from sklearn import datasets
+from sklearn.model_selection import train_test_split
 
 
 def aufgabe3():
@@ -94,5 +96,32 @@ def aufgabe3():
     plt.show()
 
 
+def aufgabe5():
+
+    s = [((0, 2), 1), ((1, 1), 1), ((1, 2.5), 1), ((2, 0), 0), ((3, 0.5), 0)]
+    w = [0, 0, 0]
+
+    for i in range(len(s)):
+        c = s[i][1]
+        input0 = 1
+        input1 = s[i][0][0]
+        input2 = s[i][0][1]
+
+        # calculation for o
+        sigma = input0 * w[0] + input1 * w[1] + input2 * w[2]
+
+        if sigma > 0:
+            o = 1
+        else:
+            o = 0
+
+        w[0] = w[0] + (c - o) * input0
+        w[1] = w[1] + (c - o) * input1
+        w[2] = w[2] + (c - o) * input2
+
+    print(w)
+
+
 if __name__ == '__main__':
-    aufgabe3()
+    # aufgabe3()
+    aufgabe5()
