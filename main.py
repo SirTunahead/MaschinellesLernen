@@ -97,10 +97,11 @@ def aufgabe3():
 
 
 def aufgabe5():
+    # Error Correction Algorithm
 
     s = [((0, 2), 1), ((1, 1), 1), ((1, 2.5), 1), ((2, 0), 0), ((3, 0.5), 0)]
     w = [0, 0, 0]
-
+    loss = 0
     for i in range(len(s)):
         c = s[i][1]
         input0 = 1
@@ -115,13 +116,63 @@ def aufgabe5():
         else:
             o = 0
 
+        loss += (c - sigma) ** 2
+
         w[0] = w[0] + (c - o) * input0
         w[1] = w[1] + (c - o) * input1
         w[2] = w[2] + (c - o) * input2
 
-    print(w)
+    print(loss)
+
+    # Grenzen des Plots definieren
+    x_min, x_max = -0.5, 3.5
+    y_min, y_max = -0.5, 3.0
+
+    # Gitter für den Plot erzeugen
+    xx, yy = np.meshgrid(np.arange(x_min, x_max, 0.1), np.arange(y_min, y_max, 0.1))
+
+    # Vorhersage für jedes Gitterpunkt berechnen
+    Z = np.zeros(xx.shape)
+    for i in range(xx.shape[0]):
+        for j in range(xx.shape[1]):
+            x1 = xx[i, j]
+            x2 = yy[i, j]
+            sigma = w[0] + w[1] * x1 + w[2] * x2
+            if sigma > 0:
+                Z[i, j] = 1
+
+    # Plotten
+    plt.figure()
+    plt.scatter([x[0][0] for x in s[:3]], [x[0][1] for x in s[:3]], color='blue', label='Klasse 1')
+    plt.scatter([x[0][0] for x in s[3:]], [x[0][1] for x in s[3:]], color='red', label='Klasse 2')
+    plt.contourf(xx, yy, Z, alpha=0.5, cmap=plt.cm.coolwarm)
+    plt.xlim(x_min, x_max)
+    plt.ylim(y_min, y_max)
+    plt.xlabel('x1')
+    plt.ylabel('x2')
+    plt.legend()
+    plt.show()
+
+    # Gradiant Desecent algorithm
+
+    s2 = [((0, 2), 1), ((1, 1), 1), ((1, 2.5), 1), ((2, 0), 0), ((3, 0.5), 0)]
+
+    w_new = [0, 0, 0]
+
+    grad = np.zeros_like(w)
+    for i in range(len(s)):
+        c = s[i][1]
+        input0 = 1
+        input1 = s2[i][0][0]
+        input2 = s2[i][0][1]
+        sigma = input0 * w_new[0] + input1 * w_new[1] + input2 * w_new[2]
+        grad[0] += -2 * (c - sigma) * input0
+        grad[1] += -2 * (c - sigma) * input1
+        grad[2] += -2 * (c - sigma) * input2
+
+    print(grad)
 
 
 if __name__ == '__main__':
-    # aufgabe3()
+    aufgabe3()
     aufgabe5()
